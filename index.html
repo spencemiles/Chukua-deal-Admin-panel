@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+   <link rel="icon" type="image/png" href="https://res.cloudinary.com/dekdxx6yx/image/upload/v1777714814/ChatGPT_Image_May_2_2026_12_39_53_PM_xjx1rf.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Subscriber Manager | Animated & Responsive</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* main card container */
+    .subscriber-card {
+      max-width: 1280px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(0px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    /* header area */
+    .card-header {
+      background: #1a2a3f;
+      padding: 1.4rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header h2 {
+      color: white;
+      font-weight: 600;
+      font-size: 1.7rem;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .card-header h2:before {
+      content: "✉️";
+      font-size: 1.8rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .subtitle {
+      color: #bcd0e6;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      font-weight: 400;
+    }
+
+    /* button styles */
+    .btn-cms {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-cms:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(238, 90, 36, 0.4);
+    }
+
+    /* table wrapper for horizontal scroll on mobile */
+    .table-wrapper {
+      overflow-x: auto;
+      padding: 0 0.5rem 0.5rem 0.5rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* modern table design */
+    .subscriber-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      margin: 0.5rem 0;
+      min-width: 500px;
+    }
+
+    .subscriber-table thead tr {
+      background: transparent;
+    }
+
+    .subscriber-table th {
+      text-align: left;
+      padding: 1rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #2c3e4e;
+      background: #eef2f8;
+      border-bottom: 2px solid #cbdde9;
+    }
+
+    .subscriber-table td {
+      background-color: white;
+      padding: 0.9rem 1.2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+      vertical-align: middle;
+    }
+
+    /* row hover animation */
+    .subscriber-table tr {
+      transition: transform 0.2s ease, box-shadow 0.2s;
+      display: table-row;
+    }
+
+    .subscriber-table tbody tr:hover td {
+      background: #fefce6;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      transform: scale(1.01);
+    }
+
+    /* email input styling */
+    .email-input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-family: 'Segoe UI', monospace;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 60px;
+      background: #ffffff;
+      transition: all 0.25s;
+      outline: none;
+      color: #1f2d3a;
+    }
+
+    .email-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      transform: scale(1.01);
+    }
+
+    /* button styles + animations */
+    .btn {
+      border: none;
+      padding: 10px 20px;
+      margin: 0 6px 6px 0;
+      font-weight: 600;
+      font-size: 0.8rem;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      font-family: inherit;
+      letter-spacing: 0.3px;
+      background: #f1f5f9;
+      color: #1e293b;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .btn-update {
+      background: #0f3b5c;
+      color: white;
+      border: none;
+    }
+
+    .btn-update:hover {
+      background: #1e4a76;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px -5px rgba(15, 59, 92, 0.4);
+    }
+
+    .btn-update:active {
+      transform: translateY(1px);
+    }
+
+    .btn-delete {
+      background: #ffffff;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-delete:hover {
+      background: #fee2e2;
+      color: #991b1b;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px -6px rgba(185, 28, 28, 0.2);
+      border-color: #fca5a5;
+    }
+
+    .btn-delete:active {
+      transform: translateY(1px);
+    }
+
+    /* loading skeleton animation (shown while fetching) */
+    .skeleton-row td {
+      background: #f0f2f5;
+      height: 65px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skeleton-row td::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      animation: shimmer 1.2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* empty state / message style */
+    .empty-message {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: #ffffffc9;
+      border-radius: 30px;
+      font-size: 1rem;
+      color: #4b5563;
+      animation: gentlePulse 1.5s ease;
+    }
+
+    /* footer subtle */
+    .card-footer {
+      background: #f9fafb;
+      padding: 0.9rem 2rem;
+      border-top: 1px solid #eef2f8;
+      font-size: 0.75rem;
+      color: #5c6f87;
+      text-align: center;
+    }
+
+    /* animations */
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes gentlePulse {
+      0% { opacity: 0.6; transform: scale(0.98);}
+      100% { opacity: 1; transform: scale(1);}
+    }
+
+    /* row delete animation (dynamic removal will be instant but we add visual feedback) */
+    .row-removing {
+      animation: fadeOutLeft 0.3s forwards;
+    }
+
+    @keyframes fadeOutLeft {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-20px);
+        display: none;
+      }
+    }
+
+    /* responsive touches */
+    @media (max-width: 680px) {
+      body {
+        padding: 1rem;
+      }
+      .card-header h2 {
+        font-size: 1.4rem;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .btn {
+        padding: 8px 14px;
+        font-size: 0.75rem;
+        margin-right: 5px;
+      }
+      .subscriber-table th, .subscriber-table td {
+        padding: 0.8rem 0.8rem;
+      }
+      .email-input {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+      .btn-cms {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .btn {
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+      .subscriber-table td {
+        vertical-align: middle;
+      }
+      .card-header {
+        padding: 1rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="subscriber-card">
+  <div class="card-header">
+    <h2>
+      <span style="display: flex; align-items: center; gap: 10px;">
+        ✉️ Manage Subscribers
+      </span>
+      <div class="header-buttons">
+        <a href="https://chukucms-3u2strdy.manus.space/" target="_blank" class="btn-cms">
+          🔥 Go to Promotions CMS →
+        </a>
+      </div>
+    </h2>
+    <div class="subtitle">Stay connected • real‑time updates & smooth animations</div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="subscriber-table" id="subscriberTable">
+      <thead>
+        <tr>
+          <th>📧 Email Address</th>
+          <th>⚡ Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- skeleton loading rows added via JS (visual feedback) -->
+        <tr class="skeleton-row"><td colspan="2">&nbsp;</td></tr>
+        <tr class="skeleton-row"><td colspan="2">&nbsp;</td></tr>
+      </tbody>
+     mélange
+  </div>
+  <div class="card-footer">
+    🔄 Smooth animations — fully responsive on all devices
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { 
+    getFirestore, 
+    collection, 
+    getDocs, 
+    doc, 
+    updateDoc, 
+    deleteDoc 
+  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+  // Firebase configuration (using provided values)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZGQNUkXaXgXBtnHERzSgTcWp4JtkJlUA",
+    authDomain: "stockyhub.firebaseapp.com",
+    projectId: "stockyhub",
+    storageBucket: "stockyhub.firebasestorage.app",
+    messagingSenderId: "532803501912",
+    appId: "1:532803501912:web:c722bbf263087a164c6f2d"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const tableBody = document.getElementById("tableBody");
+
+  // Helper: show empty friendly state with animation
+  function showEmptyState() {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="2" class="empty-message" style="text-align: center; background: transparent; box-shadow: none;">
+          ✨ No subscribers yet.<br> Add some via your admin panel ✨
+         </td>
+      </tr>
+    `;
+  }
+
+  // Load subscribers from Firestore with modern animation & live update
+  async function loadSubscribers() {
+    // Show skeleton loading effect while fetching (prevents layout shift)
+    tableBody.innerHTML = `
+      <tr class="skeleton-row"><td colspan="2"><div style="height: 58px;"></div></td></tr>
+      <tr class="skeleton-row"><td colspan="2"><div style="height: 58px;"></div></td></tr>
+    `;
+
+    try {
+      const snapshot = await getDocs(collection(db, "subscribers"));
+      
+      // clear table body
+      tableBody.innerHTML = "";
+
+      if (snapshot.empty) {
+        showEmptyState();
+        return;
+      }
+
+      // build rows with fade-in effect per row (via CSS transition on load)
+      snapshot.forEach((docSnap, index) => {
+        const data = docSnap.data();
+        const emailValue = data.email || "";
+        const docId = docSnap.id;
+
+        const row = document.createElement("tr");
+        // add custom attribute for id reference
+        row.setAttribute("data-docid", docId);
+        // small staggered animation
+        row.style.animation = `fadeSlideUp 0.3s ease forwards`;
+        row.style.opacity = "0";
+        row.style.animationDelay = `${index * 0.05}s`;
+        
+        // create cells with proper structure
+        const emailCell = document.createElement("td");
+        const actionsCell = document.createElement("td");
+        
+        // email input with dynamic id
+        const emailInput = document.createElement("input");
+        emailInput.type = "email";
+        emailInput.value = emailValue;
+        emailInput.className = "email-input";
+        emailInput.id = `input-${docId}`;
+        emailInput.placeholder = "subscriber@example.com";
+        
+        emailCell.appendChild(emailInput);
+        
+        // create buttons with modern design and event binding (global functions via window)
+        const updateBtn = document.createElement("button");
+        updateBtn.textContent = "✏️ Update";
+        updateBtn.className = "btn btn-update";
+        updateBtn.setAttribute("data-id", docId);
+        
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "🗑️ Delete";
+        deleteBtn.className = "btn btn-delete";
+        deleteBtn.setAttribute("data-id", docId);
+        
+        actionsCell.appendChild(updateBtn);
+        actionsCell.appendChild(deleteBtn);
+        
+        row.appendChild(emailCell);
+        row.appendChild(actionsCell);
+        
+        tableBody.appendChild(row);
+        
+        // attach listeners directly to avoid onclick globals conflicts but also keep compatibility
+        updateBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = updateBtn.getAttribute("data-id");
+          await updateSubscriberById(id);
+        });
+        
+        deleteBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = deleteBtn.getAttribute("data-id");
+          await deleteSubscriberById(id, row);
+        });
+      });
+    } catch (error) {
+      console.error("Error loading subscribers:", error);
+      tableBody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#c00; padding:2rem;">⚠️ Failed to load data. Check Firebase config / permissions.</td></tr>`;
+    }
+  }
+
+  // UPDATE logic: gets new email from input field
+  async function updateSubscriberById(id) {
+    const inputElement = document.getElementById(`input-${id}`);
+    if (!inputElement) {
+      console.warn("Input not found");
+      return;
+    }
+    const newEmail = inputElement.value.trim();
+    if (!newEmail) {
+      alert("❌ Email cannot be empty!");
+      return;
+    }
+    if (!newEmail.includes("@") || !newEmail.includes(".")) {
+      alert("⚠️ Please provide a valid email address.");
+      return;
+    }
+    
+    try {
+      // Visual feedback: button loading effect
+      const updateBtn = document.querySelector(`button[data-id="${id}"].btn-update`);
+      const originalText = updateBtn?.textContent || "Update";
+      if (updateBtn) {
+        updateBtn.textContent = "⏳ Updating...";
+        updateBtn.style.opacity = "0.7";
+      }
+      
+      await updateDoc(doc(db, "subscribers", id), {
+        email: newEmail
+      });
+      
+      // small animation on updated row
+      const row = document.querySelector(`tr[data-docid="${id}"]`);
+      if (row) {
+        row.style.transition = "background 0.3s";
+        row.style.backgroundColor = "#e6f7e6";
+        setTimeout(() => {
+          if (row) row.style.backgroundColor = "";
+        }, 500);
+      }
+      
+      alert("✅ Subscriber updated successfully!");
+      
+      if (updateBtn) {
+        updateBtn.textContent = originalText;
+        updateBtn.style.opacity = "1";
+      }
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("🚨 Update failed: " + (err.message || "Firebase error"));
+      if (updateBtn) {
+        updateBtn.textContent = originalText;
+        updateBtn.style.opacity = "1";
+      }
+    }
+  }
+
+  // DELETE logic with smooth row exit animation before removal
+  async function deleteSubscriberById(id, rowElement) {
+    if (!confirm("⚠️ Permanently delete this subscriber? This action cannot be undone.")) {
+      return;
+    }
+    
+    try {
+      // apply exit animation
+      if (rowElement) {
+        rowElement.classList.add("row-removing");
+        // wait for animation to finish before firestore delete & refresh?
+        // we'll wait a short moment but still delete from DB, then re-fetch to keep sync
+        // But better: delete and then remove the row without full refresh for smoother experience.
+        // Let's delete and then remove row smoothly (avoid full table reload to preserve animations)
+        // But full reload refreshes order. We'll delete from firestore then remove row from DOM.
+        await deleteDoc(doc(db, "subscribers", id));
+        // After successful deletion, animate row removal and then if no rows show empty
+        setTimeout(() => {
+          if (rowElement && rowElement.parentNode) {
+            rowElement.remove();
+            // check if tbody has any children (excluding empty message) if none show empty state
+            if (tableBody.children.length === 0) {
+              showEmptyState();
+            } else {
+              // optional: clean any leftover empty states
+              const emptyExists = document.querySelector(".empty-message");
+              if (emptyExists && tableBody.children.length > 0) emptyExists.closest('tr')?.remove();
+            }
+          }
+        }, 200); // matches animation duration
+      } else {
+        // fallback: just standard delete and reload
+        await deleteDoc(doc(db, "subscribers", id));
+        loadSubscribers();
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      alert("❌ Could not delete subscriber. Check permissions or network.");
+      // revert animation class if error
+      if (rowElement) rowElement.classList.remove("row-removing");
+    }
+  }
+
+  // Add global fallback for older inline onclick (though we use modern listeners)
+  // but for reusability from any accidental global call no conflict.
+  window.updateSubscriber = async function(id) {
+    // fallback for any dynamic calls
+    await updateSubscriberById(id);
+  };
+  
+  window.deleteSubscriber = async function(id) {
+    const row = document.querySelector(`tr[data-docid="${id}"]`);
+    if (row) {
+      await deleteSubscriberById(id, row);
+    } else {
+      // manual fallback: try find by input reference
+      await deleteDoc(doc(db, "subscribers", id));
+      loadSubscribers();
+    }
+  };
+
+  // initial load
+  loadSubscribers();
+  
+  // optional: add a realtime listener for changes? not needed but keeps simple, but we make sure update/delete causes refresh consistency.
+  // For delete via custom method we remove row instead of reload, but update we keep same input.
+  // to ensure after any external change (like manual firebase console), we could add a refresh button, but not necessary.
+  // enhance: show connection status and retry
+  window.addEventListener('online', () => {
+    console.log("Back online, reloading subscribers");
+    loadSubscribers();
+  });
+</script>
+</body>
+</html>
